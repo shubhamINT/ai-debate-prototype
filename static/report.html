@@ -33,7 +33,12 @@
               Review saved and live transcription entries for this room.
             </p>
           </div>
-          <a id="back-to-room-link" class="secondary back-link" href="">Back To Room</a>
+          <div class="report-actions">
+            <button id="generate-report-button" class="primary" type="button">
+              Generate Report
+            </button>
+            <a id="back-to-room-link" class="secondary back-link" href="">Back To Room</a>
+          </div>
         </div>
 
         <section class="report-summary" aria-label="Transcript summary">
@@ -57,6 +62,30 @@
           aria-live="polite"
         >
           <article class="transcript-placeholder">Loading transcript entries...</article>
+        </section>
+
+        <section id="generated-report-panel" class="generated-report hidden" aria-live="polite">
+          <div class="generated-report-header">
+            <div>
+              <p class="eyebrow">Generated Report</p>
+              <h2>Conversation Review</h2>
+            </div>
+          </div>
+
+          <article class="generated-report-block">
+            <span class="report-stat-label">Summary</span>
+            <p id="report-overview" class="generated-report-copy"></p>
+          </article>
+
+          <article class="generated-report-block">
+            <span class="report-stat-label">Highlights</span>
+            <div id="report-highlights" class="generated-report-points"></div>
+          </article>
+
+          <article class="generated-report-block">
+            <span class="report-stat-label">Ratings Per User</span>
+            <section id="participant-ratings" class="participant-ratings"></section>
+          </article>
         </section>
       </section>
     </main>

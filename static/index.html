@@ -22,29 +22,120 @@
       </div>
     </header>
 
-    <main class="shell">
-      <section class="panel hero">
-        <p class="eyebrow">AI-Powered Debate Platform</p>
-        <h1>Start a debate room and share the link.</h1>
-        <p class="lede">
-          Create one room URL, send it to anyone, and join the same conference from
-          any browser — with live transcription powered by AI.
-        </p>
+    <main>
+      <!-- ── Hero ──────────────────────────────────────────────────── -->
+      <section class="home-hero">
+        <div class="home-hero-inner">
+          <div class="home-hero-content">
+            <p class="eyebrow">AI-Powered Debate Platform</p>
+            <h1>Debate.<br />Transcribe.<br />Analyse.</h1>
+            <p class="lede">
+              Create one room URL, send it to anyone, and join the same
+              conference from any browser — with live transcription and
+              AI-powered scoring.
+            </p>
 
-        <div class="actions">
-          <button id="create-room-button" class="primary">Create Link</button>
-          <a id="join-created-room" class="secondary hidden" href="">Open Room</a>
-        </div>
+            <div class="actions">
+              <button id="create-room-button" class="primary btn-lg">Create Room</button>
+              <a id="join-created-room" class="secondary btn-lg hidden" href="">Open Room</a>
+            </div>
 
-        <div id="create-status" class="status" aria-live="polite"></div>
+            <div id="create-status" class="status" aria-live="polite"></div>
 
-        <section id="share-panel" class="share-panel hidden" aria-live="polite">
-          <label for="share-link">Share this room link</label>
-          <div class="share-row">
-            <input id="share-link" type="text" readonly />
-            <button id="copy-link-button" class="secondary" type="button">Copy</button>
+            <section id="share-panel" class="share-panel hidden" aria-live="polite">
+              <label for="share-link">Share this room link</label>
+              <div class="share-row">
+                <input id="share-link" type="text" readonly />
+                <button id="copy-link-button" class="secondary" type="button">Copy</button>
+              </div>
+            </section>
           </div>
-        </section>
+
+          <div class="home-hero-visual" aria-hidden="true">
+            <div class="arena">
+              <div class="arena-side arena-side--a">
+                <span class="arena-label">Side A</span>
+                <div class="arena-bars">
+                  <div class="arena-bar" style="width:82%"></div>
+                  <div class="arena-bar" style="width:65%"></div>
+                  <div class="arena-bar" style="width:90%"></div>
+                </div>
+              </div>
+              <div class="arena-vs">VS</div>
+              <div class="arena-side arena-side--b">
+                <span class="arena-label">Side B</span>
+                <div class="arena-bars">
+                  <div class="arena-bar" style="width:70%"></div>
+                  <div class="arena-bar" style="width:88%"></div>
+                  <div class="arena-bar" style="width:55%"></div>
+                </div>
+              </div>
+              <div class="arena-caption">
+                <span class="arena-dot"></span>
+                Live AI Transcription
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── How it works ──────────────────────────────────────────── -->
+      <section class="how-section">
+        <div class="how-inner">
+          <p class="eyebrow" style="text-align:center; margin-bottom:0.5rem;">How it works</p>
+          <h2 class="how-title">Three steps to a full debate</h2>
+          <div class="how-grid">
+            <div class="how-card">
+              <div class="how-step">01</div>
+              <h3 class="how-card-title">Create a Room</h3>
+              <p class="how-card-body">
+                Hit "Create Room" to generate a unique debate URL instantly.
+                No account required.
+              </p>
+            </div>
+            <div class="how-card">
+              <div class="how-step">02</div>
+              <h3 class="how-card-title">Invite Speakers</h3>
+              <p class="how-card-body">
+                Share the link with participants. Everyone joins in their
+                browser — audio, video, or audio-only.
+              </p>
+            </div>
+            <div class="how-card">
+              <div class="how-step">03</div>
+              <h3 class="how-card-title">Get the Report</h3>
+              <p class="how-card-body">
+                After the debate, AI scores each participant and generates a
+                full transcript with analysis.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Stats strip ────────────────────────────────────────────── -->
+      <section class="stats-strip">
+        <div class="stats-inner">
+          <div class="stat-item">
+            <span class="stat-value">Real-time</span>
+            <span class="stat-label">Live Transcription</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">AI Scoring</span>
+            <span class="stat-label">Per Participant</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">Any Browser</span>
+            <span class="stat-label">No Install Needed</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-value">Full Report</span>
+            <span class="stat-label">Saved Automatically</span>
+          </div>
+        </div>
       </section>
     </main>
   </body>

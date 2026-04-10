@@ -538,6 +538,13 @@ input[type="text"]:focus {
   margin-bottom: 1rem;
 }
 
+.report-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
 .report-stat {
   padding: 1rem;
   border: 1px solid var(--line);
@@ -566,6 +573,74 @@ input[type="text"]:focus {
 
 .report-transcript-list {
   max-height: none;
+}
+
+.generated-report {
+  margin-top: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.generated-report-header {
+  padding-top: 1.25rem;
+  border-top: 2px solid var(--red);
+}
+
+.generated-report-header h2 {
+  margin: 0.2rem 0 0;
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+.generated-report-block {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--red);
+  border-radius: 3px;
+  background: var(--surface);
+}
+
+.generated-report-copy,
+.rating-card-copy {
+  margin: 0.35rem 0 0;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.generated-report-points,
+.participant-ratings {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 0.35rem;
+}
+
+.generated-point,
+.rating-card {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: #fff;
+}
+
+.rating-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.rating-card-name {
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rating-card-score {
+  color: var(--red);
+  font-size: 1.2rem;
+  font-weight: 800;
 }
 
 /* ── Live caption overlay (Google Meet style) ───────────────────────────── */
@@ -699,6 +774,242 @@ input[type="text"]:focus {
   flex-wrap: wrap;
 }
 
+/* ── Home Hero ───────────────────────────────────────────────────────────── */
+
+.home-hero {
+  min-height: calc(100vh - 62px);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  background: var(--bg);
+}
+
+.home-hero-inner {
+  width: min(1280px, calc(100% - 4rem));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  padding: 4rem 0;
+}
+
+.home-hero-content {
+  max-width: 600px;
+}
+
+.home-hero-content h1 {
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 1;
+  margin: 0.25rem 0 0;
+}
+
+.btn-lg {
+  padding: 0.9rem 2rem !important;
+  font-size: 0.9rem !important;
+}
+
+/* ── Arena Visual ────────────────────────────────────────────────────────── */
+
+.home-hero-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arena {
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--red);
+  border-radius: 4px;
+  padding: 2.5rem 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+}
+
+.arena-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.arena-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.arena-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.arena-bar {
+  height: 10px;
+  border-radius: 2px;
+  background: var(--red);
+  opacity: 0.15;
+}
+
+.arena-side--a .arena-bar {
+  opacity: 0.22;
+}
+
+.arena-vs {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--red);
+  letter-spacing: 0.1em;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.arena-caption {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  justify-content: center;
+}
+
+.arena-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+  display: inline-block;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* ── How it Works ────────────────────────────────────────────────────────── */
+
+.how-section {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding: 5rem 0;
+}
+
+.how-inner {
+  width: min(1280px, calc(100% - 4rem));
+  margin: 0 auto;
+}
+
+.how-title {
+  text-align: center;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  margin: 0.25rem 0 3rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.how-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--red);
+  border-radius: 4px;
+  padding: 2rem 1.75rem;
+}
+
+.how-step {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--red);
+  line-height: 1;
+  opacity: 0.18;
+  margin-bottom: 1rem;
+  font-family: "Barlow", "Segoe UI", sans-serif;
+}
+
+.how-card-title {
+  margin: 0 0 0.6rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+
+.how-card-body {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+/* ── Stats Strip ─────────────────────────────────────────────────────────── */
+
+.stats-strip {
+  background: var(--red);
+  padding: 2.5rem 0;
+}
+
+.stats-inner {
+  width: min(1280px, calc(100% - 4rem));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1 1 160px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.stat-divider {
+  width: 1px;
+  height: 2.5rem;
+  background: rgba(255, 255, 255, 0.25);
+  flex-shrink: 0;
+}
+
 /* ── Utility ─────────────────────────────────────────────────────────────── */
 
 .hidden {
@@ -706,6 +1017,32 @@ input[type="text"]:focus {
 }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 960px) {
+  .home-hero-inner {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    padding: 3rem 0;
+  }
+
+  .home-hero-visual {
+    display: none;
+  }
+
+  .how-grid {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .stat-divider {
+    display: none;
+  }
+
+  .stats-inner {
+    justify-content: center;
+  }
+}
 
 @media (max-width: 700px) {
   .shell {
@@ -724,7 +1061,9 @@ input[type="text"]:focus {
   .share-row,
   .room-header,
   .header-actions,
-  .report-topline {
+  .report-topline,
+  .report-actions,
+  .rating-card-meta {
     flex-direction: column;
     align-items: stretch;
   }
@@ -757,5 +1096,42 @@ input[type="text"]:focus {
 
   .nav-links .nav-cta {
     display: none;
+  }
+
+  .home-hero {
+    min-height: auto;
+    padding: 2rem 0;
+  }
+
+  .home-hero-inner {
+    width: calc(100% - 2rem);
+    padding: 2rem 0;
+  }
+
+  .how-section {
+    padding: 3rem 0;
+  }
+
+  .how-inner {
+    width: calc(100% - 2rem);
+  }
+
+  .how-title {
+    margin-bottom: 2rem;
+  }
+
+  .stats-inner {
+    width: calc(100% - 2rem);
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-lg {
+    text-align: center;
   }
 }

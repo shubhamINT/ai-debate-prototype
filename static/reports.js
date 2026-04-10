@@ -1,6 +1,15 @@
 const statusEl = document.querySelector("#reports-status");
 const roomsList = document.querySelector("#rooms-list");
 
+const dummyRooms = [
+  {
+    roomId: "demo-debate-room",
+    entryCount: 6,
+    speakerCount: 3,
+    lastActivity: "2026-04-10T10:02:44Z",
+  },
+];
+
 function setStatus(message, isError = false) {
   statusEl.textContent = message;
   statusEl.classList.toggle("error", isError);
@@ -21,17 +30,6 @@ function formatDate(iso) {
 
 function renderRooms(rooms) {
   roomsList.replaceChildren();
-
-  if (!rooms.length) {
-    const empty = document.createElement("article");
-    empty.className = "transcript-placeholder";
-    empty.textContent = "No debate sessions recorded yet. Create a room and start talking!";
-    roomsList.appendChild(empty);
-    setStatus("");
-    return;
-  }
-
-  setStatus(`${rooms.length} session${rooms.length === 1 ? "" : "s"} found.`);
 
   for (const room of rooms) {
     const card = document.createElement("article");
@@ -62,11 +60,21 @@ async function loadRooms() {
   try {
     const res = await fetch("/api/transcripts");
     const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || "Failed to load sessions.");
-    renderRooms(data.rooms);
-  } catch (err) {
-    setStatus(err.message || "Unable to load sessions.", true);
+    if (!res.ok) {
+      throw new Error(data.detail || "Failed to load sessions.");
+    }
+
+    if (Array.isArray(data.rooms) && data.rooms.length) {
+      renderRooms(data.rooms);
+      setStatus(`${data.rooms.length} session${data.rooms.length === 1 ? "" : "s"} found.`);
+      return;
+    }
+  } catch (_error) {
+    // Fall back to static demo data for now.
   }
+
+  renderRooms(dummyRooms);
+  setStatus("Showing a dummy transcript session for now.");
 }
 
 loadRooms();
