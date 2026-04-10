@@ -5,10 +5,11 @@ description = "Simple LiveKit video chat prototype"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "aiohttp>=3.13.5",
     "fastapi>=0.116.1",
     "livekit-api>=1.1.0",
     "python-dotenv>=1.1.1",
-    "uvicorn>=0.35.0",
+    "uvicorn[standard]>=0.35.0",
 ]
 
 [dependency-groups]

@@ -1,0 +1,28 @@
+# Version control
+.git
+.gitignore
+
+# Python artifacts
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+
+# Tests (not needed at runtime)
+tests/
+
+# Environment & secrets (injected at runtime)
+.env
+.env.*
+
+# Dev & docs
+*.md
+commiting.txt
+.codex
+.python-version
+
+# IDE
+.vscode
+.idea

@@ -13,10 +13,16 @@ const leaveButton = document.querySelector("#leave-button");
 const roomStatus = document.querySelector("#room-status");
 const roomTitle = document.querySelector("#room-title");
 const videoGrid = document.querySelector("#video-grid");
+const transcriptStatus = document.querySelector("#transcript-status");
+const transcriptList = document.querySelector("#transcript-list");
 
 const roomId = window.location.pathname.split("/").filter(Boolean).at(-1);
+const seenTranscriptSequences = new Set();
+
 let activeRoom = null;
 let localTracks = [];
+let captionSocket = null;
+let activeAudioTrackSid = null;
 
 roomTitle.textContent = roomId ? `Room ${roomId}` : "Invalid Room";
 roomLinkInput.value = window.location.href;
@@ -24,6 +30,11 @@ roomLinkInput.value = window.location.href;
 function setStatus(message, isError = false) {
   roomStatus.textContent = message;
   roomStatus.classList.toggle("error", isError);
+}
+
+function setTranscriptStatus(message, isError = false) {
+  transcriptStatus.textContent = message;
+  transcriptStatus.classList.toggle("error", isError);
 }
 
 function copyText(value) {
@@ -46,6 +57,24 @@ function ensurePlaceholder() {
   placeholder.className = "video-placeholder";
   placeholder.textContent = "Camera feeds will appear here after participants join.";
   videoGrid.appendChild(placeholder);
+}
+
+function clearTranscriptPlaceholder() {
+  const placeholder = transcriptList.querySelector(".transcript-placeholder");
+  if (placeholder) {
+    placeholder.remove();
+  }
+}
+
+function ensureTranscriptPlaceholder() {
+  if (transcriptList.children.length > 0) {
+    return;
+  }
+
+  const placeholder = document.createElement("article");
+  placeholder.className = "transcript-placeholder";
+  placeholder.textContent = "Finalized transcript lines will show up here.";
+  transcriptList.appendChild(placeholder);
 }
 
 function participantLabel(participant, isLocal = false) {
@@ -123,6 +152,149 @@ function detachTrack(track) {
   track.detach().forEach((element) => element.remove());
 }
 
+function formatTimestamp(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+  return date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
+function appendTranscriptEntry(entry) {
+  if (!entry || seenTranscriptSequences.has(entry.sequence)) {
+    return;
+  }
+
+  seenTranscriptSequences.add(entry.sequence);
+  clearTranscriptPlaceholder();
+
+  const item = document.createElement("article");
+  item.className = "transcript-entry";
+  item.dataset.sequence = String(entry.sequence);
+
+  const meta = document.createElement("div");
+  meta.className = "transcript-entry-meta";
+
+  const speaker = document.createElement("span");
+  speaker.className = "transcript-speaker";
+  speaker.textContent = entry.participantName;
+
+  const time = document.createElement("time");
+  time.className = "transcript-time";
+  time.textContent = formatTimestamp(entry.endedAt);
+
+  const text = document.createElement("p");
+  text.className = "transcript-text";
+  text.textContent = entry.text;
+
+  meta.append(speaker, time);
+  item.append(meta, text);
+  transcriptList.appendChild(item);
+  transcriptList.scrollTop = transcriptList.scrollHeight;
+}
+
+async function loadTranscriptBacklog() {
+  const response = await fetch(`/api/transcripts/${encodeURIComponent(roomId)}`);
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.detail || "Unable to load transcript history.");
+  }
+
+  transcriptList.replaceChildren();
+  seenTranscriptSequences.clear();
+  if (!data.entries.length) {
+    ensureTranscriptPlaceholder();
+    return;
+  }
+
+  for (const entry of data.entries) {
+    appendTranscriptEntry(entry);
+  }
+}
+
+function connectCaptionFeed() {
+  if (!roomId) {
+    return;
+  }
+
+  if (captionSocket) {
+    captionSocket.close();
+  }
+
+  const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+  captionSocket = new WebSocket(
+    `${wsScheme}://${window.location.host}/ws/transcripts/${encodeURIComponent(roomId)}`,
+  );
+
+  captionSocket.addEventListener("open", () => {
+    setTranscriptStatus("Listening for live captions...");
+  });
+
+  captionSocket.addEventListener("message", (event) => {
+    const payload = JSON.parse(event.data);
+    if (payload.type === "transcript") {
+      appendTranscriptEntry(payload.entry);
+      setTranscriptStatus("Live captions are active.");
+    } else if (payload.type === "transcription-error") {
+      setTranscriptStatus(payload.message, true);
+    }
+  });
+
+  captionSocket.addEventListener("close", () => {
+    captionSocket = null;
+  });
+}
+
+async function startTrackTranscription(trackSid, participantIdentity, participantName) {
+  const response = await fetch("/api/transcription/start-track", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      roomId,
+      trackSid,
+      participantIdentity,
+      participantName,
+    }),
+  });
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.detail || "Unable to start transcription.");
+  }
+
+  activeAudioTrackSid = trackSid;
+  if (data.started) {
+    setTranscriptStatus("Live captions are starting...");
+  } else {
+    setTranscriptStatus("Live captions are already active.");
+  }
+}
+
+async function stopTrackTranscription() {
+  if (!activeAudioTrackSid) {
+    return;
+  }
+
+  try {
+    await fetch("/api/transcription/stop-track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        roomId,
+        trackSid: activeAudioTrackSid,
+      }),
+    });
+  } catch (error) {
+    // Leaving the room should not depend on the cleanup request succeeding.
+  } finally {
+    activeAudioTrackSid = null;
+  }
+}
+
 function bindRoomEvents(room) {
   room
     .on(RoomEvent.ParticipantConnected, (participant) => {
@@ -151,6 +323,14 @@ function bindRoomEvents(room) {
       participantNameInput.disabled = false;
       leaveButton.disabled = true;
       joinButton.disabled = false;
+      activeAudioTrackSid = null;
+      if (captionSocket) {
+        captionSocket.close();
+        captionSocket = null;
+      }
+      transcriptList.replaceChildren();
+      ensureTranscriptPlaceholder();
+      setTranscriptStatus("Captions disconnected.");
     });
 }
 
@@ -170,10 +350,13 @@ function renderExistingParticipants(room) {
 }
 
 async function publishLocalMedia(room, displayName) {
-  localTracks = await createLocalTracks({ audio: true, video: true });
+  localTracks = [];
+  const createdTracks = await createLocalTracks({ audio: true, video: true });
+  let audioTrackSid = null;
 
-  for (const track of localTracks) {
-    await room.localParticipant.publishTrack(track);
+  for (const track of createdTracks) {
+    const publication = await room.localParticipant.publishTrack(track);
+    localTracks.push({ track, publication });
     attachTrack(
       track,
       {
@@ -182,21 +365,36 @@ async function publishLocalMedia(room, displayName) {
       },
       true,
     );
+
+    if (track.kind === "audio") {
+      audioTrackSid = publication.trackSid || publication.sid || track.sid || null;
+    }
   }
+
+  return { audioTrackSid };
 }
 
 async function leaveRoom() {
-  for (const track of localTracks) {
+  await stopTrackTranscription();
+
+  for (const { track } of localTracks) {
     track.stop();
     detachTrack(track);
   }
   localTracks = [];
+
+  if (captionSocket) {
+    captionSocket.close();
+    captionSocket = null;
+  }
 
   if (activeRoom) {
     await activeRoom.disconnect();
   } else {
     videoGrid.replaceChildren();
     ensurePlaceholder();
+    transcriptList.replaceChildren();
+    ensureTranscriptPlaceholder();
   }
 }
 
@@ -230,7 +428,11 @@ joinForm.addEventListener("submit", async (event) => {
   }
 
   joinButton.disabled = true;
+  transcriptList.replaceChildren();
+  ensureTranscriptPlaceholder();
+  seenTranscriptSequences.clear();
   setStatus("Joining room...");
+  setTranscriptStatus("Preparing captions...");
 
   try {
     const tokenResponse = await fetch("/api/token", {
@@ -254,8 +456,21 @@ joinForm.addEventListener("submit", async (event) => {
 
     bindRoomEvents(activeRoom);
     await activeRoom.connect(tokenData.livekitUrl, tokenData.token);
-    await publishLocalMedia(activeRoom, participantName);
+    await loadTranscriptBacklog();
+    connectCaptionFeed();
+
+    const { audioTrackSid } = await publishLocalMedia(activeRoom, participantName);
     renderExistingParticipants(activeRoom);
+
+    if (audioTrackSid) {
+      await startTrackTranscription(
+        audioTrackSid,
+        activeRoom.localParticipant.identity,
+        participantName,
+      );
+    } else {
+      setTranscriptStatus("Audio track was not published, so captions are unavailable.", true);
+    }
 
     participantNameInput.disabled = true;
     leaveButton.disabled = false;
@@ -268,6 +483,7 @@ joinForm.addEventListener("submit", async (event) => {
     setStatus(error.message || "Unable to join the room.", true);
     joinButton.disabled = false;
     leaveButton.disabled = true;
+    setTranscriptStatus(error.message || "Captions are unavailable.", true);
   }
 });
 

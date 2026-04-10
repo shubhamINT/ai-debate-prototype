@@ -44,11 +44,32 @@
 
         <div id="room-status" class="status" aria-live="polite"></div>
 
-        <section id="video-grid" class="video-grid" aria-live="polite">
-          <article class="video-placeholder">
-            Camera feeds will appear here after participants join.
-          </article>
-        </section>
+        <div class="room-content">
+          <section id="video-grid" class="video-grid" aria-live="polite">
+            <article class="video-placeholder">
+              Camera feeds will appear here after participants join.
+            </article>
+          </section>
+
+          <aside class="transcript-panel">
+            <div class="transcript-header">
+              <div>
+                <p class="eyebrow">Live Captions</p>
+                <h2>Transcript</h2>
+              </div>
+            </div>
+
+            <div id="transcript-status" class="status transcript-status" aria-live="polite">
+              Captions will appear here after transcription starts.
+            </div>
+
+            <section id="transcript-list" class="transcript-list" aria-live="polite">
+              <article class="transcript-placeholder">
+                Finalized transcript lines will show up here.
+              </article>
+            </section>
+          </aside>
+        </div>
       </section>
     </main>
   </body>
