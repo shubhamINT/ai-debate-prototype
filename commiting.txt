@@ -1,0 +1,34 @@
+feat: add simple LiveKit multi-user video chat prototype
+
+Build a minimal FastAPI-based video conferencing app that creates shareable
+LiveKit room links and serves a plain HTML/JS frontend for joining the same
+room from multiple browsers.
+
+The backend now:
+- replaces the placeholder CLI entrypoint with a FastAPI app
+- serves the landing page at `/` and room page at `/room/{roomId}`
+- adds `POST /api/rooms` to generate a room id, ensure the LiveKit room exists,
+  and return a shareable join URL
+- adds `POST /api/token` to validate room/name input and issue a LiveKit JWT
+  with room join, publish, subscribe, and data permissions
+- loads LiveKit credentials from `.env`
+- returns clear API errors for invalid room ids, missing configuration, and
+  LiveKit connectivity failures
+
+The frontend now:
+- adds a simple home page with a "Create Link" flow
+- shows the generated room URL and supports copying it for sharing
+- adds a room page where participants enter a display name before joining
+- connects to LiveKit from plain browser JavaScript
+- publishes local camera/microphone tracks
+- renders remote participant media in a responsive multi-user grid
+- supports leaving and rejoining cleanly
+
+Project setup and quality updates:
+- add FastAPI, Uvicorn, python-dotenv, and livekit-api runtime dependencies
+- add pytest and httpx for API tests
+- add `uv.lock` for reproducible installs
+- document setup and usage in `README.md`
+- expand `.gitignore` for env files, logs, cache, generated outputs, and Codex artifacts
+- add endpoint tests covering room creation, token generation, validation, and
+  missing LiveKit configuration handling
