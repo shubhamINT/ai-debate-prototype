@@ -66,6 +66,13 @@ def require_settings() -> Settings:
         ) from exc
 
 
+def get_public_base_url() -> str:
+    """Return PUBLIC_BASE_URL env var (e.g. https://yourdomain.com).
+    Required when the server runs behind a proxy or in Docker so that
+    LiveKit can reach the ingest WebSocket endpoint."""
+    return os.getenv("PUBLIC_BASE_URL", "").strip()
+
+
 def get_transcripts_dir() -> Path:
     return Path(os.getenv("TRANSCRIPTS_DIR", "transcripts")).resolve()
 

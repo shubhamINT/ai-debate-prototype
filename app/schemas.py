@@ -78,3 +78,14 @@ class TranscriptEntry(BaseModel):
 class TranscriptListResponse(BaseModel):
     roomId: str
     entries: list[TranscriptEntry]
+
+
+class RoomSummary(BaseModel):
+    roomId: str
+    entryCount: int
+    speakerCount: int
+    lastActivity: str | None  # ISO timestamp of the latest entry
+
+
+class AllRoomsResponse(BaseModel):
+    rooms: list[RoomSummary]

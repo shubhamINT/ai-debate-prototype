@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Debate — All Transcripts</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <script type="module" src="/static/reports.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-inner">
+        <a class="logo" href="/">
+          <span class="logo-dot">·</span>
+          <span class="logo-name">AI Debate</span>
+          <span class="logo-badge">debate platform</span>
+        </a>
+        <nav class="nav-links">
+          <a href="/">Home</a>
+          <a href="/reports" class="nav-cta">All Transcripts</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="panel report-panel">
+        <div class="report-topline">
+          <div class="report-title">
+            <p class="eyebrow">Session Archive</p>
+            <h1>All Transcripts</h1>
+            <p class="lede">Browse every recorded debate session and review its full transcript.</p>
+          </div>
+        </div>
+
+        <div id="reports-status" class="status" aria-live="polite">Loading sessions...</div>
+
+        <section id="rooms-list" class="rooms-list" aria-live="polite"></section>
+      </section>
+    </main>
+  </body>
+</html>

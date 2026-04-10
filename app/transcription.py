@@ -225,7 +225,6 @@ class TranscriptionManager:
                 {
                     "type": "session.update",
                     "session": {
-                        "type": "transcription",
                         "audio": {
                             "input": {
                                 "format": {
@@ -310,6 +309,22 @@ class TranscriptionManager:
             if item_id and item_id not in job.committed_at:
                 job.commit_queue.append(item_id)
                 job.committed_at[item_id] = utc_now()
+            return
+
+        if event_type == "conversation.item.input_audio_transcription.delta":
+            item_id = event.get("item_id")
+            delta = (event.get("delta") or "").strip()
+            if item_id and delta:
+                await self.broadcast(
+                    job.room_id,
+                    {
+                        "type": "transcript-delta",
+                        "itemId": item_id,
+                        "participantIdentity": job.participant_identity,
+                        "participantName": job.participant_name,
+                        "delta": delta,
+                    },
+                )
             return
 
         if event_type == "conversation.item.input_audio_transcription.completed":
@@ -500,8 +515,18 @@ class TranscriptionManager:
 
 
 def build_ingest_websocket_url(request: Request, job: TrackJob) -> str:
-    base_url = URL(str(request.base_url))
-    ws_scheme = "wss" if base_url.scheme == "https" else "ws"
+    # PUBLIC_BASE_URL must be set when the server is behind a proxy or in Docker,
+    # because request.base_url resolves to an internal address that LiveKit
+    # (a cloud service) cannot reach.  Example: https://yourdomain.com
+    from .config import get_public_base_url
+
+    public_base = get_public_base_url()
+    if public_base:
+        base_url = URL(public_base.rstrip("/") + "/")
+    else:
+        base_url = URL(str(request.base_url))
+
+    ws_scheme = "wss" if base_url.scheme in {"https", "wss"} else "ws"
     ws_base = base_url.replace(scheme=ws_scheme)
     path = request.app.url_path_for("transcription_ingest_ws")
     return str(

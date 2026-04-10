@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Debate — Transcript Report</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <script type="module" src="/static/report.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-inner">
+        <a class="logo" href="/">
+          <span class="logo-dot">·</span>
+          <span class="logo-name">AI Debate</span>
+          <span class="logo-badge">debate platform</span>
+        </a>
+        <nav class="nav-links">
+          <a href="/">Home</a>
+          <a href="/reports">All Transcripts</a>
+          <a id="back-to-room-nav" href="" class="nav-cta">Back to Room</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell report-shell">
+      <section class="panel report-panel">
+        <div class="report-topline">
+          <div class="report-title">
+            <p class="eyebrow">Transcript Report</p>
+            <h1 id="report-title">Room Report</h1>
+            <p id="report-subtitle" class="lede">
+              Review saved and live transcription entries for this room.
+            </p>
+          </div>
+          <a id="back-to-room-link" class="secondary back-link" href="">Back To Room</a>
+        </div>
+
+        <section class="report-summary" aria-label="Transcript summary">
+          <article class="report-stat">
+            <span class="report-stat-label">Entries</span>
+            <strong id="entry-count" class="report-stat-value">0</strong>
+          </article>
+          <article class="report-stat">
+            <span class="report-stat-label">Speakers</span>
+            <strong id="speaker-count" class="report-stat-value">0</strong>
+          </article>
+        </section>
+
+        <div id="report-status" class="status" aria-live="polite">
+          Loading transcript history...
+        </div>
+
+        <section
+          id="report-transcript-list"
+          class="transcript-list report-transcript-list"
+          aria-live="polite"
+        >
+          <article class="transcript-placeholder">Loading transcript entries...</article>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

@@ -9,7 +9,9 @@ from fastapi.staticfiles import StaticFiles
 from .config import STATIC_DIR
 from .livekit_service import create_room_token, ensure_room_exists
 from .schemas import (
+    AllRoomsResponse,
     CreateRoomResponse,
+    RoomSummary,
     StopTrackTranscriptionRequest,
     TokenRequest,
     TokenResponse,
@@ -37,6 +39,16 @@ async def serve_home() -> FileResponse:
 @app.get("/room/{room_id}", response_class=FileResponse, name="serve_room")
 async def serve_room(room_id: str) -> FileResponse:
     return FileResponse(STATIC_DIR / "room.html")
+
+
+@app.get("/room/{room_id}/report", response_class=FileResponse, name="serve_report")
+async def serve_report(room_id: str) -> FileResponse:
+    return FileResponse(STATIC_DIR / "report.html")
+
+
+@app.get("/reports", response_class=FileResponse, name="serve_reports")
+async def serve_reports() -> FileResponse:
+    return FileResponse(STATIC_DIR / "reports.html")
 
 
 @app.post("/api/rooms", response_model=CreateRoomResponse)
@@ -71,6 +83,55 @@ async def stop_track_transcription(
 ) -> TrackTranscriptionResponse:
     manager = get_transcription_manager()
     return await manager.stop_track(payload)
+
+
+@app.get("/api/transcripts", response_model=AllRoomsResponse)
+async def list_all_transcripts() -> AllRoomsResponse:
+    from .config import get_transcripts_dir
+
+    transcripts_dir = get_transcripts_dir()
+    rooms: list[RoomSummary] = []
+
+    if transcripts_dir.exists():
+        for room_dir in sorted(transcripts_dir.iterdir()):
+            if not room_dir.is_dir():
+                continue
+            events_path = room_dir / "events.jsonl"
+            if not events_path.exists():
+                continue
+
+            import json as _json
+
+            entry_count = 0
+            speakers: set[str] = set()
+            last_activity: str | None = None
+
+            with events_path.open("r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        obj = _json.loads(line)
+                        entry_count += 1
+                        if obj.get("participantName"):
+                            speakers.add(obj["participantName"])
+                        last_activity = obj.get("endedAt", last_activity)
+                    except Exception:
+                        pass
+
+            rooms.append(
+                RoomSummary(
+                    roomId=room_dir.name,
+                    entryCount=entry_count,
+                    speakerCount=len(speakers),
+                    lastActivity=last_activity,
+                )
+            )
+
+    # Most recently active rooms first
+    rooms.sort(key=lambda r: r.lastActivity or "", reverse=True)
+    return AllRoomsResponse(rooms=rooms)
 
 
 @app.get("/api/transcripts/{room_id}", response_model=TranscriptListResponse)

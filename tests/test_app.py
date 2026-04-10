@@ -39,6 +39,11 @@ async def test_create_room_returns_join_link(monkeypatch):
     assert payload["joinUrl"].endswith(f"/room/{payload['roomId']}")
 
 
+def test_report_route_is_registered():
+    path = main.app.url_path_for("serve_report", room_id="room-demo")
+    assert path == "/room/room-demo/report"
+
+
 @pytest.mark.anyio
 async def test_token_requires_non_empty_values(monkeypatch):
     async def fake_ensure_room_exists(room_id: str) -> None:

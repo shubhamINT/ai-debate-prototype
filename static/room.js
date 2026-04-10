@@ -10,8 +10,11 @@ const joinForm = document.querySelector("#join-form");
 const participantNameInput = document.querySelector("#participant-name");
 const joinButton = document.querySelector("#join-button");
 const leaveButton = document.querySelector("#leave-button");
+const muteToggleButton = document.querySelector("#mute-toggle");
+const videoToggleButton = document.querySelector("#video-toggle");
 const roomStatus = document.querySelector("#room-status");
 const roomTitle = document.querySelector("#room-title");
+const reportLink = document.querySelector("#report-link");
 const videoGrid = document.querySelector("#video-grid");
 const transcriptStatus = document.querySelector("#transcript-status");
 const transcriptList = document.querySelector("#transcript-list");
@@ -26,6 +29,9 @@ let activeAudioTrackSid = null;
 
 roomTitle.textContent = roomId ? `Room ${roomId}` : "Invalid Room";
 roomLinkInput.value = window.location.href;
+if (reportLink) {
+  reportLink.href = roomId ? `/room/${encodeURIComponent(roomId)}/report` : "#";
+}
 
 function setStatus(message, isError = false) {
   roomStatus.textContent = message;
@@ -39,6 +45,45 @@ function setTranscriptStatus(message, isError = false) {
 
 function copyText(value) {
   return navigator.clipboard.writeText(value);
+}
+
+function getLocalTrack(kind) {
+  return localTracks.find(({ track }) => track.kind === kind)?.track || null;
+}
+
+function updateMediaControlButtons() {
+  const audioTrack = getLocalTrack("audio");
+  const videoTrack = getLocalTrack("video");
+
+  muteToggleButton.disabled = !audioTrack;
+  videoToggleButton.disabled = !videoTrack;
+
+  muteToggleButton.textContent = audioTrack?.isMuted ? "Unmute" : "Mute";
+  videoToggleButton.textContent = videoTrack?.isMuted ? "Video On" : "Video Off";
+}
+
+async function toggleLocalTrack(kind) {
+  const track = getLocalTrack(kind);
+  if (!track) {
+    return;
+  }
+
+  const button = kind === "audio" ? muteToggleButton : videoToggleButton;
+  button.disabled = true;
+
+  try {
+    if (track.isMuted) {
+      await track.unmute();
+      setStatus(kind === "audio" ? "Microphone is on." : "Camera is on.");
+    } else {
+      await track.mute();
+      setStatus(kind === "audio" ? "Microphone muted." : "Camera turned off.");
+    }
+  } catch (error) {
+    setStatus(error.message || "Unable to update media device state.", true);
+  } finally {
+    updateMediaControlButtons();
+  }
 }
 
 function clearPlaceholder() {
@@ -320,10 +365,12 @@ function bindRoomEvents(room) {
       videoGrid.replaceChildren();
       ensurePlaceholder();
       activeRoom = null;
+      localTracks = [];
       participantNameInput.disabled = false;
       leaveButton.disabled = true;
       joinButton.disabled = false;
       activeAudioTrackSid = null;
+      updateMediaControlButtons();
       if (captionSocket) {
         captionSocket.close();
         captionSocket = null;
@@ -382,6 +429,7 @@ async function leaveRoom() {
     detachTrack(track);
   }
   localTracks = [];
+  updateMediaControlButtons();
 
   if (captionSocket) {
     captionSocket.close();
@@ -405,6 +453,14 @@ copyRoomLinkButton.addEventListener("click", async () => {
   } catch (error) {
     setStatus("Copy failed. You can copy the URL manually.", true);
   }
+});
+
+muteToggleButton.addEventListener("click", async () => {
+  await toggleLocalTrack("audio");
+});
+
+videoToggleButton.addEventListener("click", async () => {
+  await toggleLocalTrack("video");
 });
 
 leaveButton.addEventListener("click", async () => {
@@ -472,6 +528,7 @@ joinForm.addEventListener("submit", async (event) => {
       setTranscriptStatus("Audio track was not published, so captions are unavailable.", true);
     }
 
+    updateMediaControlButtons();
     participantNameInput.disabled = true;
     leaveButton.disabled = false;
     setStatus("Connected. Anyone with this link can join.");
@@ -492,3 +549,5 @@ window.addEventListener("beforeunload", () => {
     activeRoom.disconnect();
   }
 });
+
+updateMediaControlButtons();

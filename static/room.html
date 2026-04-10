@@ -3,11 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Video Room</title>
+    <title>AI Debate — Room</title>
     <link rel="stylesheet" href="/static/app.css" />
     <script type="module" src="/static/room.js"></script>
   </head>
   <body>
+    <header class="site-header">
+      <div class="nav-inner">
+        <a class="logo" href="/">
+          <span class="logo-dot">·</span>
+          <span class="logo-name">AI Debate</span>
+          <span class="logo-badge">debate platform</span>
+        </a>
+        <nav class="nav-links">
+          <a href="/">Home</a>
+          <a href="/reports">All Transcripts</a>
+          <a href="/" class="nav-cta">New Room</a>
+        </nav>
+      </div>
+    </header>
+
     <main class="shell room-shell">
       <section class="panel room-panel">
         <div class="room-header">
@@ -15,7 +30,18 @@
             <p class="eyebrow">Shared Room</p>
             <h1 id="room-title">Room</h1>
           </div>
-          <a class="secondary back-link" href="/">Create Another Link</a>
+          <div class="header-actions">
+            <a
+              id="report-link"
+              class="secondary back-link"
+              href=""
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Report
+            </a>
+            <a class="secondary back-link" href="/">Create Another</a>
+          </div>
         </div>
 
         <div class="share-room-banner">
@@ -45,10 +71,19 @@
         <div id="room-status" class="status" aria-live="polite"></div>
 
         <div class="room-content">
-          <section id="video-grid" class="video-grid" aria-live="polite">
-            <article class="video-placeholder">
-              Camera feeds will appear here after participants join.
-            </article>
+          <section class="video-stage">
+            <section id="video-grid" class="video-grid" aria-live="polite">
+              <article class="video-placeholder">
+                Camera feeds will appear here after participants join.
+              </article>
+            </section>
+
+            <div class="media-controls" aria-label="Call controls">
+              <button id="mute-toggle" class="secondary" type="button" disabled>Mute</button>
+              <button id="video-toggle" class="secondary" type="button" disabled>
+                Video Off
+              </button>
+            </div>
           </section>
 
           <aside class="transcript-panel">
