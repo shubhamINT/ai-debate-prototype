@@ -18,7 +18,7 @@ log "Using port ${PORT}."
 
 # ── build ─────────────────────────────────────────────────────────────────────
 log "Building image..."
-docker compose build
+docker-compose build
 
 # ── deploy ────────────────────────────────────────────────────────────────────
 log "Starting container..."
