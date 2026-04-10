@@ -78,32 +78,20 @@
               </article>
             </section>
 
-            <div class="media-controls" aria-label="Call controls">
-              <button id="mute-toggle" class="secondary" type="button" disabled>Mute</button>
-              <button id="video-toggle" class="secondary" type="button" disabled>
-                Video Off
-              </button>
-            </div>
-          </section>
-
-          <aside class="transcript-panel">
-            <div class="transcript-header">
-              <div>
-                <p class="eyebrow">Live Captions</p>
-                <h2>Transcript</h2>
+            <!-- Google Meet-style live caption overlay -->
+            <div id="caption-overlay" class="caption-overlay caption-empty" aria-live="polite" aria-atomic="true">
+              <div class="caption-box">
+                <div id="caption-speaker" class="caption-speaker"></div>
+                <div id="caption-text" class="caption-text"></div>
               </div>
             </div>
 
-            <div id="transcript-status" class="status transcript-status" aria-live="polite">
-              Captions will appear here after transcription starts.
+            <div class="media-controls" aria-label="Call controls">
+              <button id="mute-toggle" class="secondary" type="button" disabled>Mute</button>
+              <button id="video-toggle" class="secondary" type="button" disabled>Video Off</button>
+              <button id="captions-toggle" class="secondary cc-btn" type="button" title="Hide live captions" aria-pressed="true">CC</button>
             </div>
-
-            <section id="transcript-list" class="transcript-list" aria-live="polite">
-              <article class="transcript-placeholder">
-                Finalized transcript lines will show up here.
-              </article>
-            </section>
-          </aside>
+          </section>
         </div>
       </section>
     </main>

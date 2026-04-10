@@ -14,6 +14,7 @@ Set these environment variables in `.env`:
 - `LIVEKIT_API_KEY`
 - `LIVEKIT_API_SECRET`
 - `OPENAI_API_KEY`
+- `PUBLIC_BASE_URL` for Docker, reverse proxies, and remote/cloud LiveKit deployments
 
 Optional transcription settings:
 
@@ -35,6 +36,19 @@ Then open `http://127.0.0.1:8000`.
 If you use LiveKit Cloud or another remote LiveKit deployment, the FastAPI app
 must be reachable by that service because track egress connects back to the
 server through the `/ws/transcription-ingest` WebSocket endpoint.
+
+`LIVEKIT_URL` is the address your app uses to connect to LiveKit. `PUBLIC_BASE_URL`
+is the public URL LiveKit uses to connect back to your FastAPI app for track
+egress ingestion. In local development, `PUBLIC_BASE_URL` can be left empty if
+everything runs on the same reachable host. In Docker, behind a reverse proxy,
+or with a remote LiveKit instance, set it to the public app URL such as
+`https://app.example.com`.
+
+If transcription starts successfully but stays at `waiting-for-audio` and no
+transcript entries appear, first verify that `PUBLIC_BASE_URL` points to a
+publicly reachable host, that your proxy forwards WebSocket upgrades for
+`/ws/transcription-ingest` and `/ws/transcripts/{roomId}`, and that production
+TLS is valid so LiveKit can establish the callback connection.
 
 ## Project Structure
 

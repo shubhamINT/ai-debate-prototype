@@ -305,9 +305,6 @@ input[type="text"]:focus {
 }
 
 .room-content {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(300px, 0.95fr);
-  gap: 1rem;
   margin-top: 1.5rem;
 }
 
@@ -451,31 +448,6 @@ input[type="text"]:focus {
 
 /* ── Transcript panel ────────────────────────────────────────────────────── */
 
-.transcript-panel {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  padding: 1rem;
-  border: 1px solid var(--line);
-  border-radius: 4px;
-  background: #fff;
-}
-
-.transcript-header {
-  border-bottom: 2px solid var(--red);
-  padding-bottom: 0.75rem;
-  margin-bottom: 0.75rem;
-}
-
-.transcript-header h2 {
-  margin: 0;
-  font-size: 1.3rem;
-}
-
-.transcript-status {
-  margin-top: 0;
-  margin-bottom: 0.75rem;
-}
 
 .transcript-list {
   display: flex;
@@ -594,6 +566,81 @@ input[type="text"]:focus {
 
 .report-transcript-list {
   max-height: none;
+}
+
+/* ── Live caption overlay (Google Meet style) ───────────────────────────── */
+
+.caption-overlay {
+  position: absolute;
+  bottom: 5.2rem;        /* sit above the media controls bar */
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 8;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 450ms ease;
+}
+
+.caption-overlay.caption-fading {
+  opacity: 0;
+}
+
+.caption-overlay.caption-empty {
+  opacity: 0;
+  visibility: hidden;   /* remove from a11y tree when not shown */
+}
+
+.caption-box {
+  background: rgba(8, 8, 8, 0.84);
+  backdrop-filter: blur(6px);
+  padding: 0.55rem 1.4rem 0.7rem;
+  border-radius: 3px;
+  max-width: min(680px, calc(100% - 3rem));
+  text-align: center;
+  border-left: 3px solid var(--red);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+.caption-speaker {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--red);
+  margin-bottom: 0.25rem;
+}
+
+.caption-text {
+  color: #ffffff;
+  font-size: 1.12rem;
+  font-weight: 600;
+  line-height: 1.45;
+  font-family: "Barlow", "Segoe UI", sans-serif;
+  /* Cap at 2 lines with ellipsis so it never overflows */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* CC toggle button states */
+.cc-btn {
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  min-width: 3rem;
+}
+
+.cc-btn.cc-active {
+  background: var(--red) !important;
+  border-color: var(--red) !important;
+  color: #fff !important;
+}
+
+.cc-btn:not(.cc-active) {
+  opacity: 0.55;
+  text-decoration: line-through;
 }
 
 /* ── Rooms list (all transcripts page) ──────────────────────────────────── */
