@@ -22,7 +22,7 @@ docker compose build
 
 # ── deploy ────────────────────────────────────────────────────────────────────
 log "Starting container..."
-docker compose up -d --remove-orphans
+docker-compose up -d --remove-orphans
 
 # ── verify (no curl — works on any server) ───────────────────────────────────
 log "Waiting for container to be running..."
