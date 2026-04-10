@@ -8,3 +8,15 @@ wheels/
 
 # Virtual environments
 .venv
+.env*
+*.log
+transcripts/
+output-recordings/
+call-end-reports
+.ruff_cache
+
+# Generated documentation
+*site/
+*sripts/
+
+.codex

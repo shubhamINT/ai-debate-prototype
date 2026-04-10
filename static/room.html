@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Room</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <script type="module" src="/static/room.js"></script>
+  </head>
+  <body>
+    <main class="shell room-shell">
+      <section class="panel room-panel">
+        <div class="room-header">
+          <div>
+            <p class="eyebrow">Shared Room</p>
+            <h1 id="room-title">Room</h1>
+          </div>
+          <a class="secondary back-link" href="/">Create Another Link</a>
+        </div>
+
+        <div class="share-room-banner">
+          <span>Share this URL:</span>
+          <input id="room-link" type="text" readonly />
+          <button id="copy-room-link" class="secondary" type="button">Copy</button>
+        </div>
+
+        <form id="join-form" class="join-form">
+          <label for="participant-name">Your name</label>
+          <div class="join-row">
+            <input
+              id="participant-name"
+              name="participantName"
+              type="text"
+              maxlength="60"
+              placeholder="Enter your display name"
+              required
+            />
+            <button id="join-button" class="primary" type="submit">Join Call</button>
+            <button id="leave-button" class="secondary" type="button" disabled>
+              Leave
+            </button>
+          </div>
+        </form>
+
+        <div id="room-status" class="status" aria-live="polite"></div>
+
+        <section id="video-grid" class="video-grid" aria-live="polite">
+          <article class="video-placeholder">
+            Camera feeds will appear here after participants join.
+          </article>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

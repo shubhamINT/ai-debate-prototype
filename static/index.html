@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quick Video Room</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <script src="/static/home.js" defer></script>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel hero">
+        <p class="eyebrow">LiveKit Video Chat</p>
+        <h1>Start a video room and share the link.</h1>
+        <p class="lede">
+          Create one room URL, send it to anyone, and join the same conference from
+          any browser.
+        </p>
+
+        <div class="actions">
+          <button id="create-room-button" class="primary">Create Link</button>
+          <a id="join-created-room" class="secondary hidden" href="">Open Room</a>
+        </div>
+
+        <div id="create-status" class="status" aria-live="polite"></div>
+
+        <section id="share-panel" class="share-panel hidden" aria-live="polite">
+          <label for="share-link">Share this room link</label>
+          <div class="share-row">
+            <input id="share-link" type="text" readonly />
+            <button id="copy-link-button" class="secondary" type="button">Copy</button>
+          </div>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>
