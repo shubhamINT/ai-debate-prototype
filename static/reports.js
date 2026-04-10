@@ -1,7 +1,7 @@
 const statusEl = document.querySelector("#reports-status");
 const roomsList = document.querySelector("#rooms-list");
 
-const dummyRooms = [
+const sampleRooms = [
   {
     roomId: "demo-debate-room",
     entryCount: 6,
@@ -47,8 +47,7 @@ function renderRooms(rooms) {
         </div>
       </div>
       <div class="room-card-actions">
-        <a class="secondary" href="/room/${encodeURIComponent(room.roomId)}/report">View Transcript</a>
-        <a class="primary" href="/room/${encodeURIComponent(room.roomId)}">Join Room</a>
+        <a class="primary" href="/room/${encodeURIComponent(room.roomId)}/report">View Transcript</a>
       </div>
     `;
 
@@ -73,8 +72,8 @@ async function loadRooms() {
     // Fall back to static demo data for now.
   }
 
-  renderRooms(dummyRooms);
-  setStatus("Showing a dummy transcript session for now.");
+  renderRooms(sampleRooms);
+  setStatus("Showing a sample transcript session.");
 }
 
 loadRooms();

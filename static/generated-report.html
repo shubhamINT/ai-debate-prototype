@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Debate — Generated Report</title>
+    <link rel="stylesheet" href="/static/app.css" />
+    <script type="module" src="/static/generated-report.js"></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="nav-inner">
+        <a class="logo" href="/">
+          <span class="logo-dot">·</span>
+          <span class="logo-name">AI Debate</span>
+          <span class="logo-badge">debate platform</span>
+        </a>
+        <nav class="nav-links">
+          <a href="/">Home</a>
+          <a href="/reports">All Transcripts</a>
+          <a id="back-to-transcript-nav" href="" class="nav-cta">View Transcript</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="shell report-shell">
+      <section class="panel report-panel">
+        <div class="report-topline">
+          <div class="report-title">
+            <p class="eyebrow">Generated Report</p>
+            <h1 id="report-title">Debate Report</h1>
+            <p id="report-subtitle" class="lede">
+              AI-generated analysis and participant ratings for this debate session.
+            </p>
+          </div>
+          <div class="report-actions">
+            <button id="store-report-button" class="primary" type="button">
+              Store Report
+            </button>
+            <a id="back-to-transcript-link" class="secondary back-link" href="">
+              Back to Transcript
+            </a>
+          </div>
+        </div>
+
+        <div id="report-status" class="status" aria-live="polite"></div>
+
+        <div id="generated-report-body" class="generated-report" aria-live="polite">
+          <article class="generated-report-block">
+            <span class="report-stat-label">Summary</span>
+            <p id="report-overview" class="generated-report-copy"></p>
+          </article>
+
+          <article class="generated-report-block">
+            <span class="report-stat-label">Highlights</span>
+            <div id="report-highlights" class="generated-report-points"></div>
+          </article>
+
+          <article class="generated-report-block">
+            <span class="report-stat-label">Ratings Per Participant</span>
+            <section id="participant-ratings" class="participant-ratings"></section>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -27,8 +27,9 @@ ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# Copy application source (no tests, no lock files, no caches)
+# Copy application source needed at runtime.
 COPY main.py ./
+COPY app/ ./app/
 COPY static/ ./static/
 
 EXPOSE 8000

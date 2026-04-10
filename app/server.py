@@ -46,6 +46,11 @@ async def serve_report(room_id: str) -> FileResponse:
     return FileResponse(STATIC_DIR / "report.html")
 
 
+@app.get("/room/{room_id}/generated-report", response_class=FileResponse, name="serve_generated_report")
+async def serve_generated_report(room_id: str) -> FileResponse:
+    return FileResponse(STATIC_DIR / "generated-report.html")
+
+
 @app.get("/reports", response_class=FileResponse, name="serve_reports")
 async def serve_reports() -> FileResponse:
     return FileResponse(STATIC_DIR / "reports.html")

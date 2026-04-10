@@ -1,20 +1,15 @@
 const reportTitle = document.querySelector("#report-title");
 const reportSubtitle = document.querySelector("#report-subtitle");
-const backToRoomLink = document.querySelector("#back-to-room-link");
 const reportStatus = document.querySelector("#report-status");
 const transcriptList = document.querySelector("#report-transcript-list");
 const entryCount = document.querySelector("#entry-count");
 const speakerCount = document.querySelector("#speaker-count");
 const generateReportButton = document.querySelector("#generate-report-button");
-const generatedReportPanel = document.querySelector("#generated-report-panel");
-const reportOverview = document.querySelector("#report-overview");
-const reportHighlights = document.querySelector("#report-highlights");
-const participantRatings = document.querySelector("#participant-ratings");
 
 const pathParts = window.location.pathname.split("/").filter(Boolean);
 const roomId = pathParts.length >= 3 ? pathParts[1] : "";
 
-const dummyTranscriptEntries = [
+const transcriptEntries = [
   {
     sequence: 1,
     participantName: "Aisha",
@@ -53,7 +48,7 @@ const dummyTranscriptEntries = [
   },
 ];
 
-const dummyGeneratedReport = {
+const generatedReport = {
   overview:
     "The discussion stayed focused on how an AI debate product should balance response speed, factual reliability, and visible quality signals. The group aligned around a hybrid approach where the system stays responsive but marks uncertainty and produces a post-call evaluation.",
   highlights: [
@@ -82,15 +77,8 @@ const dummyGeneratedReport = {
 
 reportTitle.textContent = roomId ? `Room ${roomId}` : "Transcript Report";
 reportSubtitle.textContent = roomId
-  ? `Review the dummy multi-user transcription and generate a sample report for room ${roomId}.`
+  ? `Review the transcription and generate a report for room ${roomId}.`
   : "This report link is invalid.";
-
-const backToRoomNav = document.querySelector("#back-to-room-nav");
-const roomHref = roomId ? `/room/${encodeURIComponent(roomId)}` : "/";
-backToRoomLink.href = roomHref;
-if (backToRoomNav) {
-  backToRoomNav.href = roomHref;
-}
 
 function setStatus(message, isError = false) {
   reportStatus.textContent = message;
@@ -115,6 +103,33 @@ function updateSummary(entries) {
   speakerCount.textContent = String(speakers.size);
 }
 
+const SPEAKER_COLORS = [
+  "#c8102e",
+  "#1d4ed8",
+  "#047857",
+  "#6d28d9",
+  "#b45309",
+  "#0f766e",
+  "#be185d",
+  "#1e40af",
+];
+
+function getSpeakerColor(speakerMap, name) {
+  if (!speakerMap.has(name)) {
+    speakerMap.set(name, SPEAKER_COLORS[speakerMap.size % SPEAKER_COLORS.length]);
+  }
+  return speakerMap.get(name);
+}
+
+function getInitials(name) {
+  return (name || "?")
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}
+
 function renderTranscriptEntries(entries) {
   transcriptList.replaceChildren();
 
@@ -127,79 +142,76 @@ function renderTranscriptEntries(entries) {
     return;
   }
 
+  const speakerColors = new Map();
+  let lastSpeaker = null;
+
   for (const entry of entries) {
-    const item = document.createElement("article");
-    item.className = "transcript-entry";
-    item.dataset.sequence = String(entry.sequence);
+    const name = entry.participantName || "Unknown";
+    const color = getSpeakerColor(speakerColors, name);
+    const isContinued = name === lastSpeaker;
+    lastSpeaker = name;
 
-    const meta = document.createElement("div");
-    meta.className = "transcript-entry-meta";
+    const row = document.createElement("article");
+    row.className = "conv-row" + (isContinued ? " conv-continued" : "");
+    row.dataset.sequence = String(entry.sequence);
 
-    const speaker = document.createElement("span");
-    speaker.className = "transcript-speaker";
-    speaker.textContent = entry.participantName || "Unknown speaker";
+    if (!isContinued) {
+      const avatar = document.createElement("div");
+      avatar.className = "conv-avatar";
+      avatar.style.background = color;
+      avatar.textContent = getInitials(name);
 
-    const time = document.createElement("time");
-    time.className = "transcript-time";
-    time.textContent = formatTimestamp(entry.endedAt);
+      const body = document.createElement("div");
+      body.className = "conv-body";
 
-    const text = document.createElement("p");
-    text.className = "transcript-text";
-    text.textContent = entry.text;
+      const header = document.createElement("div");
+      header.className = "conv-header";
 
-    meta.append(speaker, time);
-    item.append(meta, text);
-    transcriptList.appendChild(item);
+      const speakerEl = document.createElement("span");
+      speakerEl.className = "conv-speaker";
+      speakerEl.style.color = color;
+      speakerEl.textContent = name;
+
+      const timeEl = document.createElement("time");
+      timeEl.className = "conv-time";
+      timeEl.textContent = formatTimestamp(entry.endedAt);
+
+      const textEl = document.createElement("p");
+      textEl.className = "conv-text";
+      textEl.textContent = entry.text;
+
+      header.append(speakerEl, timeEl);
+      body.append(header, textEl);
+      row.append(avatar, body);
+    } else {
+      const spacer = document.createElement("div");
+      spacer.className = "conv-avatar-spacer";
+
+      const textEl = document.createElement("p");
+      textEl.className = "conv-text conv-text--continued";
+      textEl.textContent = entry.text;
+
+      const timeEl = document.createElement("time");
+      timeEl.className = "conv-time conv-time--inline";
+      timeEl.textContent = formatTimestamp(entry.endedAt);
+      textEl.appendChild(timeEl);
+
+      row.append(spacer, textEl);
+    }
+
+    transcriptList.appendChild(row);
   }
 
   updateSummary(entries);
 }
 
-function renderHighlights(highlights) {
-  reportHighlights.replaceChildren();
-
-  for (const highlight of highlights) {
-    const point = document.createElement("article");
-    point.className = "generated-point";
-    point.textContent = highlight;
-    reportHighlights.appendChild(point);
-  }
-}
-
-function renderRatings(ratings) {
-  participantRatings.replaceChildren();
-
-  for (const rating of ratings) {
-    const card = document.createElement("article");
-    card.className = "rating-card";
-
-    const meta = document.createElement("div");
-    meta.className = "rating-card-meta";
-
-    const name = document.createElement("strong");
-    name.className = "rating-card-name";
-    name.textContent = rating.participantName;
-
-    const value = document.createElement("span");
-    value.className = "rating-card-score";
-    value.textContent = rating.rating;
-
-    const text = document.createElement("p");
-    text.className = "rating-card-copy";
-    text.textContent = rating.rationale;
-
-    meta.append(name, value);
-    card.append(meta, text);
-    participantRatings.appendChild(card);
-  }
-}
 
 function renderGeneratedReport() {
-  reportOverview.textContent = dummyGeneratedReport.overview;
-  renderHighlights(dummyGeneratedReport.highlights);
-  renderRatings(dummyGeneratedReport.ratings);
-  generatedReportPanel.classList.remove("hidden");
-  setStatus("Dummy report generated successfully.");
+  localStorage.setItem(
+    `generated-report-${roomId}`,
+    JSON.stringify({ roomId, report: generatedReport })
+  );
+  window.location.href = `/room/${encodeURIComponent(roomId)}/generated-report`;
 }
 
 function initializeReport() {
@@ -218,8 +230,8 @@ function initializeReport() {
     return;
   }
 
-  renderTranscriptEntries(dummyTranscriptEntries);
-  setStatus("Dummy multi-user transcription loaded.");
+  renderTranscriptEntries(transcriptEntries);
+  setStatus("Transcription loaded.");
 }
 
 if (generateReportButton) {
